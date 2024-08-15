@@ -8,7 +8,7 @@ const server = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
   res.end('Hola, MundosE! 1\n');
-});
+}); 
 
 // Inicia el servidor y escucha en el puerto configurado
 server.listen(PORT, () => {
