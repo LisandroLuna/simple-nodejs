@@ -14,7 +14,7 @@ pipeline {
                 dir("${env.WORKSPACE}") {
                 snykSecurity(
                     snykInstallation: 'snyk',
-                    snykTokenId: 'snyk-api-token',
+                    snykTokenId: 'snyk-token',
                     failOnIssues: true,
                     organisation: 'LisandroLuna'
                 )
