@@ -13,7 +13,7 @@ pipeline {
                 git branch: "${env.BRANCH_NAME}", url: 'https://github.com/LisandroLuna/simple-nodejs.git'
                 snykSecurity(
                   snykInstallation: 'snyk',
-                  snykTokenId: '0b2a7d46-5937-4fb2-8618-3dd8d905b892',
+                  snykTokenId: 'snyk-token',
                 )
             }
         }
