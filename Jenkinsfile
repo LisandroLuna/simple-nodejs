@@ -15,6 +15,7 @@ pipeline {
                   snykInstallation: 'snyk',
                   snykTokenId: 'snyk-token',
                   failOnIssues: true,
+                  organization: 'LisandroLuna',
                 )
             }
         }
