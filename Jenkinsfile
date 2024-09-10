@@ -11,12 +11,14 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: "${env.BRANCH_NAME}", url: 'https://github.com/LisandroLuna/simple-nodejs.git'
+                dir("${env.WORKSPACE}") {
                 snykSecurity(
-                  snykInstallation: 'snyk',
-                  snykTokenId: 'snyk-token',
-                  failOnIssues: true,
-                  organisation: 'LisandroLuna',
+                    snykInstallation: 'Jenkins',
+                    snykTokenId: 'snyk-api-token',
+                    failOnIssues: true,
+                    org: 'LisandroLuna'
                 )
+                }
             }
         }
 
