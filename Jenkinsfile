@@ -11,6 +11,10 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: "${env.BRANCH_NAME}", url: 'https://github.com/LisandroLuna/simple-nodejs.git'
+                snykSecurity(
+                  snykInstallation: 'Jenkins',
+                  snykTokenId: '0b2a7d46-5937-4fb2-8618-3dd8d905b892',
+                )
             }
         }
 
@@ -28,10 +32,6 @@ pipeline {
                 script {
                     sh "sudo docker run --rm ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER} npm test"
                 }
-                snykSecurity(
-                  snykInstallation: 'Jenkins',
-                  snykTokenId: '0b2a7d46-5937-4fb2-8618-3dd8d905b892',
-                )
             }
         }
 
