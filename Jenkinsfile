@@ -13,7 +13,7 @@ pipeline {
                 git branch: "${env.BRANCH_NAME}", url: 'https://github.com/LisandroLuna/simple-nodejs.git'
                 dir("${env.WORKSPACE}") {
                 snykSecurity(
-                    snykInstallation: 'Jenkins',
+                    snykInstallation: 'snyk',
                     snykTokenId: 'snyk-api-token',
                     failOnIssues: true,
                     organisation: 'LisandroLuna'
