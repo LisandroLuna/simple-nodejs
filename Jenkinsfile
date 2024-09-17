@@ -14,6 +14,17 @@ pipeline {
             }
         }
 
+        stage('Snyk') {
+            steps {
+                withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
+                    sh 'curl -Lo snyk https://static.snyk.io/cli/latest/snyk-linux'
+                    sh 'chmod +x snyk'
+                    sh './snyk auth $SNYK_TOKEN'
+                    sh './snyk test'
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_HUB_PASSWORD', usernameVariable: 'DOCKER_HUB_USERNAME')]) {
@@ -27,12 +38,6 @@ pipeline {
             steps {
                 script {
                     sh "sudo docker run --rm ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER} npm test"
-                    withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
-                        sh 'curl -Lo snyk https://static.snyk.io/cli/latest/snyk-linux'
-                        sh 'chmod +x snyk'
-                        sh './snyk auth $SNYK_TOKEN'
-                        sh './snyk test'
-                    }
                 }
             }
         }
