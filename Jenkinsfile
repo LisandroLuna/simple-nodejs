@@ -27,6 +27,12 @@ pipeline {
             steps {
                 script {
                     sh "sudo docker run --rm ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER} npm test"
+                    withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
+                        sh 'curl -Lo snyk https://static.snyk.io/cli/latest/snyk-linux'
+                        sh 'chmod +x snyk'
+                        sh './snyk auth $SNYK_TOKEN'
+                        sh './snyk test'
+                    }
                 }
             }
         }
