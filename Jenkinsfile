@@ -14,13 +14,29 @@ pipeline {
             }
         }
 
-        stage('Snyk') {
+        stage('Snyk Scan') {
             steps {
                 withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
                     sh 'curl -Lo snyk https://static.snyk.io/cli/latest/snyk-linux'
                     sh 'chmod +x snyk'
                     sh './snyk auth $SNYK_TOKEN'
                     sh './snyk test'
+                }
+            }
+        }
+
+        stage('Snyk Code Analysis') {
+            steps {
+                withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
+                    sh './snyk code test --severity-threshold=medium'
+                }
+            }
+        }
+
+        stage('Snyk Container Scan') {
+            steps {
+                withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
+                    sh './snyk container test my-image:latest --file=Dockerfile --severity-threshold=medium'
                 }
             }
         }
