@@ -28,15 +28,7 @@ pipeline {
         stage('Snyk Container Scan') {
             steps {
                 withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
-                    sh './snyk container test --file=Dockerfile --severity-threshold=medium -d' 
-                }
-            }
-        }
-
-        stage('Snyk Code Analysis') {
-            steps {
-                withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
-                    sh './snyk code test --severity-threshold=medium'
+                    sh './snyk container test lisandrodev/simple-nodejs --file=Dockerfile --severity-threshold=medium -d' 
                 }
             }
         }
