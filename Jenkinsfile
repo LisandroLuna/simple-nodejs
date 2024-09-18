@@ -28,7 +28,7 @@ pipeline {
         stage('Snyk Container Scan') {
             steps {
                 withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
-                    sh './snyk container test my-image:latest --file=Dockerfile --severity-threshold=medium'
+                    sh './snyk container test --file=Dockerfile --severity-threshold=medium -d' 
                 }
             }
         }
