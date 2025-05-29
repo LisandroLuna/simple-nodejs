@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'docker-agent'}
 
     environment {
         DOCKER_IMAGE_NAME = "maguilaes/simple-nodejs"
