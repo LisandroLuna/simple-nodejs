@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'docker-agent'}
 
     environment {
         DOCKER_IMAGE_NAME = "maguilaes/simple-nodejs"
@@ -21,7 +21,7 @@ pipeline {
         }
 
       
-      /*   stage('Test') {
+        stage('Test') {
             steps {
                 script {
                     sh "docker run --rm ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER} npm test"
@@ -29,7 +29,7 @@ pipeline {
             }
         }
         
-        stage('Tag Docker Image') {
+       /*     stage('Tag Docker Image') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_HUB_PASSWORD', usernameVariable: 'DOCKER_HUB_USERNAME')]) {
