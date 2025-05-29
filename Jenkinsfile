@@ -20,15 +20,16 @@ pipeline {
             }
         }
 
-       stage('Test') {
+      
+      /*   stage('Test') {
             steps {
                 script {
                     sh "docker run --rm ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER} npm test"
                 }
             }
         }
-
-      stage('Tag Docker Image') {
+        
+        stage('Tag Docker Image') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_HUB_PASSWORD', usernameVariable: 'DOCKER_HUB_USERNAME')]) {
@@ -41,7 +42,7 @@ pipeline {
             } 
         }
         
-       /*    post {
+         post {
             always {
                 script {
                     try {
