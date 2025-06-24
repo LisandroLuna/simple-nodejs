@@ -45,8 +45,8 @@ pipeline {
         always {
             script {
                 try {
-                    sh "sudo docker rmi ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-                    sh "sudo docker rmi ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-latest"
+                    sh "docker rmi ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+                    sh "docker rmi ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-latest"
                 } catch (Exception e) {
                     echo 'Failed to remove Docker image.'
                 }
