@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'docker-agent' }
 
     environment {
         DOCKER_IMAGE_NAME = "maguilaes/simple-nodejs"
@@ -12,14 +12,13 @@ pipeline {
             }
         }
 
-        // stage('Build Docker Image') {
-        //     steps { 
-        //         script {
-        //             sh "docker build -t ${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER} ."
-        //         } 
-        //     }
-        // }
-      
+        stage('Build Docker Image') {
+            steps { 
+                script {
+                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER} ."
+                } 
+            }
+        }      
         // stage('Test') {
         //     steps {
         //         script {
