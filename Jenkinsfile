@@ -13,58 +13,47 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-            steps { 
-                script {
-                    // Build with branch-buildnumber tag for consistency
-                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER} ."
-                } 
-            }
-        }      
-        
-        stage('Test') {
             steps {
-                script {
-                    // Use the same tag we built with
-                    sh "docker run --rm ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER} npm test"
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_HUB_PASSWORD', usernameVariable: 'DOCKER_HUB_USERNAME')]) {
+                    sh "echo ${DOCKER_HUB_PASSWORD} | sudo docker login -u ${DOCKER_HUB_USERNAME} --password-stdin"
+                    sh "sudo docker build -t ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER} ."
                 }
             }
         }
-        
+
+        stage('Test') {
+            steps {
+                script {
+                    sh "sudo docker run --rm ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER} npm test"
+                }
+            }
+        }
+
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Verify credentials exist in Jenkins with this ID
-                    withCredentials([usernamePassword(
-                        credentialsId: 'docker-hub-credentials', // Must match Jenkins credential ID
-                        passwordVariable: 'DOCKER_HUB_PASSWORD',
-                        usernameVariable: 'DOCKER_HUB_USERNAME'
-                    ]) {
-                        // Removed sudo for consistency
-                        sh "echo ${DOCKER_HUB_PASSWORD} | docker login -u ${DOCKER_HUB_USERNAME} --password-stdin"
-                        sh "docker push ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_HUB_PASSWORD', usernameVariable: 'DOCKER_HUB_USERNAME')]) {
+                        sh "echo ${DOCKER_HUB_PASSWORD} | sudo docker login -u ${DOCKER_HUB_USERNAME} --password-stdin"
+                        sh "sudo docker push ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
                         
+                        // Tag as latest only if on the main branch
                         if (env.BRANCH_NAME == 'main') {
-                            // Tag from existing image
-                            sh "docker tag ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER} ${DOCKER_IMAGE_NAME}:latest"
-                            sh "docker push ${DOCKER_IMAGE_NAME}:latest"
+                            sh "sudo docker tag ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER} ${DOCKER_IMAGE_NAME}:latest"
+                            sh "sudo docker push ${DOCKER_IMAGE_NAME}:latest"
                         }
                     }
                 }
             }
         }
     }
-        
+
     post {
         always {
             script {
                 try {
-                    // Clean up all tags we created
-                    sh "docker rmi ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER} || true"
-                    if (env.BRANCH_NAME == 'main') {
-                        sh "docker rmi ${DOCKER_IMAGE_NAME}:latest || true"
-                    }
+                    sh "sudo docker rmi ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
                 } catch (Exception e) {
-                    echo 'Failed to remove Docker images. Continuing...'
+                    echo 'Failed to remove Docker image.'
                 }
             }
         }
