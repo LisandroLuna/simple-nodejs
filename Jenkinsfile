@@ -2,7 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE_NAME = "maguilaes/simple-nodejs"
+        DOCKER_IMAGE_NAME = "maguilaes/simple-nodejs",
+        DOCKER_HUB_PASSWORD = credentials('docker-credentials-id'),
+        DOCKER_HUB_USERNAME = credentials('docker-username-id')
     }
     
     stages {
@@ -15,14 +17,14 @@ pipeline {
         stage('Build Docker Image') {
             steps { 
                 script {
-                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER} ."
+                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER} ."
                 } 
             }
         }      
         stage('Test') {
             steps {
                 script {
-                    sh "docker run --rm ${DOCKER_IMAGE_NAME}:${env.BUILD_NUMBER} npm test"
+                    sh "docker run --rm ${DOCKER_IMAGE_NAME}:${env.BRANCH_NAME}-${env.BUILD_NUMBER} npm test"
                 }
             }
         }
