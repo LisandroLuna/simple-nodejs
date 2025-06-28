@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE_NAME = "maguilaes/simple-nodejs",
-        DOCKER_HUB_PASSWORD = credentials('docker-credentials-id'),
+        DOCKER_HUB_PASSWORD = credentials('docker-credentials-id')
         DOCKER_HUB_USERNAME = credentials('docker-username-id')
     }
     
